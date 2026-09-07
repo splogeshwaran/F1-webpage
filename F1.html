@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 Apex Racing Dashboard</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0b0b0f;
+    color: #fff;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 70px;
+    background: rgba(10,10,14,0.95);
+    border-bottom: 1px solid #292932;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 7%;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.logo span {
+    color: #e10600;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+    list-style: none;
+}
+
+.nav-links a {
+    color: #ddd;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #e10600;
+}
+
+.menu-btn {
+    display: none;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+/* ================= HERO ================= */
+
+.hero {
+    min-height: 620px;
+    display: flex;
+    align-items: center;
+    padding: 70px 7%;
+    background:
+        linear-gradient(90deg, #08080b 10%, rgba(8,8,11,.85) 45%, rgba(8,8,11,.3)),
+        linear-gradient(135deg, #250000, #0b0b0f 55%);
+}
+
+.hero-content {
+    max-width: 650px;
+}
+
+.tag {
+    display: inline-block;
+    background: #e10600;
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.hero h1 {
+    font-size: clamp(45px, 7vw, 85px);
+    line-height: .95;
+    margin-bottom: 20px;
+}
+
+.hero h1 span {
+    color: #e10600;
+}
+
+.hero p {
+    color: #aaa;
+    font-size: 17px;
+    line-height: 1.7;
+    margin-bottom: 30px;
+}
+
+.btn {
+    border: none;
+    padding: 14px 25px;
+    background: #e10600;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.btn:hover {
+    background: #ff2b25;
+    transform: translateY(-2px);
+}
+
+/* ================= COUNTDOWN ================= */
+
+.countdown-box {
+    margin-top: 35px;
+    padding: 20px;
+    border: 1px solid #303038;
+    background: rgba(20,20,25,.8);
+    max-width: 520px;
+}
+
+.countdown-title {
+    color: #aaa;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+.countdown {
+    display: flex;
+    gap: 25px;
+}
+
+.time-box h2 {
+    font-size: 30px;
+}
+
+.time-box span {
+    font-size: 10px;
+    color: #777;
+}
+
+/* ================= SECTIONS ================= */
+
+section {
+    padding: 80px 7%;
+}
+
+.section-title {
+    margin-bottom: 35px;
+}
+
+.section-title small {
+    color: #e10600;
+    font-weight: bold;
+}
+
+.section-title h2 {
+    font-size: 38px;
+    margin-top: 8px;
+}
+
+/* ================= STATS ================= */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 15px;
+    background: #111116;
+}
+
+.stat-card {
+    padding: 30px;
+    background: #18181e;
+    border-left: 3px solid #e10600;
+}
+
+.stat-card h3 {
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+.stat-card p {
+    color: #888;
+}
+
+/* ================= DRIVERS ================= */
+
+.driver-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.search {
+    padding: 14px 18px;
+    background: #18181e;
+    border: 1px solid #333;
+    color: white;
+    width: 300px;
+    outline: none;
+}
+
+.driver-grid {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 18px;
+}
+
+.driver-card {
+    background: #16161c;
+    border: 1px solid #292932;
+    padding: 22px;
+    transition: .3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.driver-card:hover {
+    transform: translateY(-7px);
+    border-color: #e10600;
+}
+
+.driver-number {
+    font-size: 50px;
+    font-weight: 900;
+    color: #333;
+}
+
+.driver-name {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.driver-team {
+    color: #999;
+    margin-top: 5px;
+}
+
+.driver-points {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.driver-points strong {
+    color: #e10600;
+}
+
+/* ================= STANDINGS ================= */
+
+.standings-section {
+    background: #111116;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+th, td {
+    padding: 18px;
+    text-align: left;
+    border-bottom: 1px solid #292932;
+}
+
+th {
+    background: #1c1c22;
+    color: #aaa;
+    font-size: 12px;
+}
+
+td {
+    font-weight: bold;
+}
+
+.position {
+    color: #e10600;
+}
+
+/* ================= RACES ================= */
+
+.race-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 18px;
+}
+
+.race-card {
+    background: #16161c;
+    border: 1px solid #292932;
+    padding: 25px;
+    transition: .3s;
+}
+
+.race-card:hover {
+    border-color: #e10600;
+    transform: translateY(-5px);
+}
+
+.race-round {
+    color: #e10600;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.race-card h3 {
+    margin: 12px 0;
+    font-size: 23px;
+}
+
+.race-location {
+    color: #999;
+    margin-bottom: 20px;
+}
+
+.race-info {
+    display: flex;
+    justify-content: space-between;
+    color: #aaa;
+    font-size: 13px;
+}
+
+/* ================= CIRCUIT ================= */
+
+.circuit {
+    background: #111116;
+}
+
+.circuit-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.track {
+    height: 350px;
+    overflow: hidden;
+    border: 1px solid #333;
+    background: #111;
+}
+
+.track img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.circuit-info h3 {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.circuit-info p {
+    color: #999;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.circuit-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.detail {
+    background: #18181e;
+    padding: 20px;
+}
+
+.detail span {
+    color: #777;
+    display: block;
+    font-size: 12px;
+    margin-bottom: 7px;
+}
+
+/* ================= FOOTER ================= */
+
+footer {
+    padding: 35px 7%;
+    background: #070709;
+    border-top: 1px solid #292932;
+    display: flex;
+    justify-content: space-between;
+    color: #777;
+    font-size: 13px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width: 1000px) {
+
+    .driver-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .race-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .stats {
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+
+@media(max-width: 700px) {
+
+    .navbar {
+        padding: 0 5%;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: #111116;
+        flex-direction: column;
+        padding: 25px;
+        gap: 20px;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .menu-btn {
+        display: block;
+    }
+
+    section {
+        padding: 60px 5%;
+    }
+
+    .driver-grid,
+    .race-grid,
+    .circuit-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .hero {
+        padding: 60px 5%;
+    }
+
+    .countdown {
+        gap: 12px;
+    }
+
+    .time-box h2 {
+        font-size: 24px;
+    }
+
+    footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        F1<span>APEX</span>
+    </div>
+
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#home">HOME</a></li>
+        <li><a href="#drivers">DRIVERS</a></li>
+        <li><a href="#standings">STANDINGS</a></li>
+        <li><a href="#races">RACES</a></li>
+        <li><a href="#circuit">CIRCUIT</a></li>
+    </ul>
+
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+</nav>
+
+
+<!-- HERO -->
+
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <div class="tag">FORMULA 1 • RACING HUB</div>
+
+        <h1>
+            FEEL THE<br>
+            <span>SPEED.</span>
+        </h1>
+
+        <p>
+            Explore drivers, teams, race calendars and championship
+            standings in one interactive Formula 1 dashboard.
+        </p>
+
+        <button class="btn" onclick="scrollToDrivers()">
+            EXPLORE DRIVERS →
+        </button>
+
+        <div class="countdown-box">
+
+            <div class="countdown-title">
+                NEXT GRAND PRIX
+            </div>
+
+            <h3 id="nextRace">ITALIAN GRAND PRIX</h3>
+
+            <br>
+
+            <div class="countdown">
+
+                <div class="time-box">
+                    <h2 id="days">00</h2>
+                    <span>DAYS</span>
+                </div>
+
+                <div class="time-box">
+                    <h2 id="hours">00</h2>
+                    <span>HOURS</span>
+                </div>
+
+                <div class="time-box">
+                    <h2 id="minutes">00</h2>
+                    <span>MINUTES</span>
+                </div>
+
+                <div class="time-box">
+                    <h2 id="seconds">00</h2>
+                    <span>SECONDS</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- STATS -->
+
+<section class="stats">
+
+    <div class="stat-card">
+        <h3>20</h3>
+        <p>Drivers</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>10</h3>
+        <p>Teams</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>24</h3>
+        <p>Race Weekends</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>2026</h3>
+        <p>Season</p>
+    </div>
+
+</section>
+
+
+<!-- DRIVERS -->
+
+<section id="drivers">
+
+    <div class="section-title">
+        <small>THE GRID</small>
+        <h2>F1 DRIVERS</h2>
+    </div>
+
+    <div class="driver-controls">
+
+        <input
+            type="text"
+            class="search"
+            id="driverSearch"
+            placeholder="Search driver..."
+            onkeyup="searchDrivers()"
+        >
+
+    </div>
+
+    <div class="driver-grid" id="driverGrid">
+
+        <div class="driver-card" data-name="lando norris">
+
+            <div class="driver-number">01</div>
+
+            <div class="driver-name">
+                Lando Norris
+            </div>
+
+            <div class="driver-team">
+                McLaren
+            </div>
+
+            <div class="driver-points">
+                <span>Points</span>
+                <strong>314</strong>
+            </div>
+
+        </div>
+
+
+        <div class="driver-card" data-name="oscar piastri">
+
+            <div class="driver-number">81</div>
+
+            <div class="driver-name">
+                Oscar Piastri
+            </div>
+
+            <div class="driver-team">
+                McLaren
+            </div>
+
+            <div class="driver-points">
+                <span>Points</span>
+                <strong>292</strong>
+            </div>
+
+        </div>
+
+
+        <div class="driver-card" data-name="max verstappen">
+
+            <div class="driver-number">03</div>
+
+            <div class="driver-name">
+                Max Verstappen
+            </div>
+
+            <div class="driver-team">
+                Red Bull Racing
+            </div>
+
+            <div class="driver-points">
+                <span>Points</span>
+                <strong>278</strong>
+            </div>
+
+        </div>
+
+
+        <div class="driver-card" data-name="charles leclerc">
+
+            <div class="driver-number">16</div>
+
+            <div class="driver-name">
+                Charles Leclerc
+            </div>
+
+            <div class="driver-team">
+                Ferrari
+            </div>
+
+            <div class="driver-points">
+                <span>Points</span>
+                <strong>245</strong>
+            </div>
+
+        </div>
+
+
+        <div class="driver-card" data-name="lewis hamilton">
+
+            <div class="driver-number">44</div>
+
+            <div class="driver-name">
+                Lewis Hamilton
+            </div>
+
+            <div class="driver-team">
+                Ferrari
+            </div>
+
+            <div class="driver-points">
+                <span>Points</span>
+                <strong>221</strong>
+            </div>
+
+        </div>
+
+
+        <div class="driver-card" data-name="george russell">
+
+            <div class="driver-number">63</div>
+
+            <div class="driver-name">
+                George Russell
+            </div>
+
+            <div class="driver-team">
+                Mercedes
+            </div>
+
+            <div class="driver-points">
+                <span>Points</span>
+                <strong>205</strong>
+            </div>
+
+        </div>
+
+
+        <div class="driver-card" data-name="fernando alonso">
+
+            <div class="driver-number">14</div>
+
+            <div class="driver-name">
+                Fernando Alonso
+            </div>
+
+            <div class="driver-team">
+                Aston Martin
+            </div>
+
+            <div class="driver-points">
+                <span>Points</span>
+                <strong>118</strong>
+            </div>
+
+        </div>
+
+
+        <div class="driver-card" data-name="alexander albon">
+
+            <div class="driver-number">23</div>
+
+            <div class="driver-name">
+                Alexander Albon
+            </div>
+
+            <div class="driver-team">
+                Williams
+            </div>
+
+            <div class="driver-points">
+                <span>Points</span>
+                <strong>92</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- STANDINGS -->
+
+<section class="standings-section" id="standings">
+
+    <div class="section-title">
+        <small>CHAMPIONSHIP</small>
+        <h2>DRIVER STANDINGS</h2>
+    </div>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>POS</th>
+                    <th>DRIVER</th>
+                    <th>TEAM</th>
+                    <th>WINS</th>
+                    <th>POINTS</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td class="position">01</td>
+                    <td>Lando Norris</td>
+                    <td>McLaren</td>
+                    <td>6</td>
+                    <td>314</td>
+                </tr>
+
+                <tr>
+                    <td class="position">02</td>
+                    <td>Oscar Piastri</td>
+                    <td>McLaren</td>
+                    <td>5</td>
+                    <td>292</td>
+                </tr>
+
+                <tr>
+                    <td class="position">03</td>
+                    <td>Max Verstappen</td>
+                    <td>Red Bull Racing</td>
+                    <td>4</td>
+                    <td>278</td>
+                </tr>
+
+                <tr>
+                    <td class="position">04</td>
+                    <td>Charles Leclerc</td>
+                    <td>Ferrari</td>
+                    <td>2</td>
+                    <td>245</td>
+                </tr>
+
+                <tr>
+                    <td class="position">05</td>
+                    <td>Lewis Hamilton</td>
+                    <td>Ferrari</td>
+                    <td>1</td>
+                    <td>221</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<!-- RACES -->
+
+<section id="races">
+
+    <div class="section-title">
+        <small>2026 SEASON</small>
+        <h2>RACE CALENDAR</h2>
+    </div>
+
+    <div class="race-grid">
+
+        <div class="race-card">
+            <span class="race-round">ROUND 01</span>
+            <h3>Australian GP</h3>
+            <p class="race-location">Melbourne, Australia</p>
+            <div class="race-info">
+                <span>March 15</span>
+                <span>58 Laps</span>
+            </div>
+        </div>
+
+        <div class="race-card">
+            <span class="race-round">ROUND 02</span>
+            <h3>Chinese GP</h3>
+            <p class="race-location">Shanghai, China</p>
+            <div class="race-info">
+                <span>March 22</span>
+                <span>56 Laps</span>
+            </div>
+        </div>
+
+        <div class="race-card">
+            <span class="race-round">ROUND 03</span>
+            <h3>Japanese GP</h3>
+            <p class="race-location">Suzuka, Japan</p>
+            <div class="race-info">
+                <span>April 5</span>
+                <span>53 Laps</span>
+            </div>
+        </div>
+
+        <div class="race-card">
+            <span class="race-round">ROUND 04</span>
+            <h3>Bahrain GP</h3>
+            <p class="race-location">Sakhir, Bahrain</p>
+            <div class="race-info">
+                <span>April 19</span>
+                <span>57 Laps</span>
+            </div>
+        </div>
+
+        <div class="race-card">
+            <span class="race-round">ROUND 05</span>
+            <h3>Miami GP</h3>
+            <p class="race-location">Miami, USA</p>
+            <div class="race-info">
+                <span>May 3</span>
+                <span>57 Laps</span>
+            </div>
+        </div>
+
+        <div class="race-card">
+            <span class="race-round">ROUND 06</span>
+            <h3>Monaco GP</h3>
+            <p class="race-location">Monte Carlo, Monaco</p>
+            <div class="race-info">
+                <span>May 24</span>
+                <span>78 Laps</span>
+            </div>
+        </div>
+
+        <div class="race-card">
+            <span class="race-round">ROUND 06</span>
+            <h3>Monaco GP</h3>
+            <p class="race-location">Monte Carlo, Monaco</p>
+            <div class="race-info">
+                <span>May 24</span>
+                <span>78 Laps</span>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- CIRCUIT -->
+
+<section class="circuit" id="circuit">
+
+    <div class="section-title">
+        <small>TRACK DATA</small>
+        <h2>CIRCUIT EXPLORER</h2>
+    </div>
+
+    <div class="circuit-layout">
+
+        <div class="track">
+            <img src="images/monza-track.png" alt="Monza Circuit">
+        </div>
+
+        <div class="circuit-info">
+
+            <h3>Monza Circuit</h3>
+
+            <p>
+                One of the fastest circuits on the Formula 1 calendar.
+                Known for its long straights, heavy braking zones and
+                legendary racing atmosphere.
+            </p>
+
+            <div class="circuit-details">
+
+                <div class="detail">
+                    <span>LENGTH</span>
+                    5.793 KM
+                </div>
+
+                <div class="detail">
+                    <span>CORNERS</span>
+                    11
+                </div>
+
+                <div class="detail">
+                    <span>LAPS</span>
+                    53
+                </div>
+
+                <div class="detail">
+                    <span>RACE DISTANCE</span>
+                    306.720 KM
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    <span>© 2026 F1 APEX</span>
+
+    <span>Built with HTML • CSS • JavaScript</span>
+
+</footer>
+
+
+<script>
+
+/* ================= MOBILE MENU ================= */
+
+function toggleMenu() {
+
+    document
+        .getElementById("navLinks")
+        .classList
+        .toggle("active");
+
+}
+
+
+/* ================= SCROLL ================= */
+
+function scrollToDrivers() {
+
+    document
+        .getElementById("drivers")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+/* ================= DRIVER SEARCH ================= */
+
+function searchDrivers() {
+
+    const input =
+        document
+        .getElementById("driverSearch")
+        .value
+        .toLowerCase();
+
+    const cards =
+        document.querySelectorAll(".driver-card");
+
+    cards.forEach(card => {
+
+        const name =
+            card.getAttribute("data-name");
+
+        if(name.includes(input)) {
+
+            card.style.display = "block";
+
+        } else {
+
+            card.style.display = "none";
+
+        }
+
+    });
+
+}
+
+
+/* ================= COUNTDOWN ================= */
+
+const raceDate =
+    new Date("September 6, 2026 15:00:00").getTime();
+
+
+function updateCountdown() {
+
+    const now =
+        new Date().getTime();
+
+    const difference =
+        raceDate - now;
+
+    if(difference <= 0) {
+
+        document.getElementById("days").innerText = "00";
+        document.getElementById("hours").innerText = "00";
+        document.getElementById("minutes").innerText = "00";
+        document.getElementById("seconds").innerText = "00";
+
+        return;
+
+    }
+
+    const days =
+        Math.floor(
+            difference /
+            (1000 * 60 * 60 * 24)
+        );
+
+    const hours =
+        Math.floor(
+            (difference /
+            (1000 * 60 * 60)) % 24
+        );
+
+    const minutes =
+        Math.floor(
+            (difference /
+            (1000 * 60)) % 60
+        );
+
+    const seconds =
+        Math.floor(
+            (difference /
+            1000) % 60
+        );
+
+
+    document.getElementById("days")
+        .innerText = String(days).padStart(2,"0");
+
+    document.getElementById("hours")
+        .innerText = String(hours).padStart(2,"0");
+
+    document.getElementById("minutes")
+        .innerText = String(minutes).padStart(2,"0");
+
+    document.getElementById("seconds")
+        .innerText = String(seconds).padStart(2,"0");
+
+}
+
+
+updateCountdown();
+
+setInterval(updateCountdown, 1000);
+
+</script>
+
+</body>
+</html>
