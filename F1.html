@@ -3,1150 +3,1376 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>F1 Apex Racing Dashboard</title>
+<title>F1 Apex — Racing Dashboard</title>
+<link rel="icon" type="image/png" href="https://wallpaperaccess.com/full/2180256.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+
+/* =========================================================
+   TOKENS
+========================================================= */
+
+:root {
+    --bg: #0a0a0d;
+    --surface: #131318;
+    --surface-2: #1b1b22;
+    --line: #27272f;
+    --red: #e10600;
+    --red-bright: #ff2b25;
+    --purple: #9d4edd;
+    --gold: #d4af37;
+    --silver: #bfc3cc;
+    --bronze: #cd7f32;
+    --text: #f2f1ee;
+    --text-dim: #9494a0;
+    --text-faint: #5c5c68;
+
+    --display: 'Titillium Web', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+    --edge: 7%;
 }
 
-html {
-    scroll-behavior: smooth;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #0b0b0f;
-    color: #fff;
+    font-family: var(--display);
+    background: var(--bg);
+    color: var(--text);
 }
 
-/* ================= NAVBAR ================= */
+button { font-family: var(--display); cursor: pointer; }
+
+:focus-visible { outline: 2px solid var(--red-bright); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* livery stripe */
+.livery-stripe {
+    height: 3px;
+    background: linear-gradient(90deg, var(--red) 0%, var(--red) 60%, var(--surface-2) 60%, var(--surface-2) 100%);
+}
+
+/* kicker label — broadcast-graphic style, not a plain caps eyebrow */
+.kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+}
+
+.kicker::before {
+    content: "";
+    width: 9px;
+    height: 9px;
+    background: var(--red);
+}
+
+.section-head { margin-bottom: 38px; }
+
+.section-head h2 {
+    font-size: clamp(28px, 3vw, 38px);
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+section { padding: 84px var(--edge); }
+
+/* =========================================================
+   NAVBAR
+========================================================= */
 
 .navbar {
     position: sticky;
     top: 0;
     z-index: 1000;
     height: 70px;
-    background: rgba(10,10,14,0.95);
-    border-bottom: 1px solid #292932;
+    background: rgba(10,10,13,0.95);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 7%;
+    padding: 0 var(--edge);
 }
 
 .logo {
-    font-size: 25px;
+    font-size: 22px;
     font-weight: 900;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
 }
 
-.logo span {
-    color: #e10600;
-}
+.logo span { color: var(--red); }
 
 .nav-links {
     display: flex;
-    gap: 30px;
+    gap: 32px;
     list-style: none;
 }
 
 .nav-links a {
-    color: #ddd;
+    color: var(--text-dim);
     text-decoration: none;
-    font-size: 14px;
-    font-weight: bold;
-    transition: 0.3s;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    transition: color 0.25s;
 }
 
-.nav-links a:hover {
-    color: #e10600;
-}
+.nav-links a:hover { color: var(--red-bright); }
 
 .menu-btn {
     display: none;
-    font-size: 25px;
-    cursor: pointer;
+    font-size: 22px;
+    background: none;
+    border: none;
+    color: var(--text);
 }
 
-/* ================= HERO ================= */
+/* =========================================================
+   HERO
+========================================================= */
 
 .hero {
-    min-height: 620px;
+    position: relative;
+    min-height: 600px;
     display: flex;
     align-items: center;
-    padding: 70px 7%;
+    padding: 70px var(--edge);
+    overflow: hidden;
     background:
-        linear-gradient(90deg, #08080b 10%, rgba(8,8,11,.85) 45%, rgba(8,8,11,.3)),
-        linear-gradient(135deg, #250000, #0b0b0f 55%);
+        linear-gradient(100deg, #0a0a0d 30%, rgba(10,10,13,.7) 60%, rgba(10,10,13,.15)),
+        linear-gradient(135deg, #2a0000, #0a0a0d 55%);
 }
 
-.hero-content {
-    max-width: 650px;
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        115deg,
+        rgba(255,255,255,0.025) 0px,
+        rgba(255,255,255,0.025) 2px,
+        transparent 2px,
+        transparent 60px
+    );
+    pointer-events: none;
 }
+
+.hero-content { max-width: 640px; position: relative; }
 
 .tag {
-    display: inline-block;
-    background: #e10600;
-    padding: 8px 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--red);
+    padding: 8px 14px;
+    font-family: var(--mono);
     font-size: 12px;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-weight: 500;
+    margin-bottom: 22px;
 }
 
 .hero h1 {
-    font-size: clamp(45px, 7vw, 85px);
-    line-height: .95;
+    font-size: clamp(44px, 6.5vw, 80px);
+    font-weight: 900;
+    line-height: 0.98;
     margin-bottom: 20px;
 }
 
-.hero h1 span {
-    color: #e10600;
-}
+.hero h1 span { color: var(--red); }
 
 .hero p {
-    color: #aaa;
-    font-size: 17px;
+    color: var(--text-dim);
+    font-size: 16.5px;
     line-height: 1.7;
+    max-width: 46ch;
     margin-bottom: 30px;
 }
 
 .btn {
     border: none;
-    padding: 14px 25px;
-    background: #e10600;
+    padding: 14px 26px;
+    background: var(--red);
     color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: .3s;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    transition: background 0.25s, transform 0.25s;
 }
 
-.btn:hover {
-    background: #ff2b25;
-    transform: translateY(-2px);
-}
+.btn:hover { background: var(--red-bright); transform: translateY(-2px); }
 
-/* ================= COUNTDOWN ================= */
+/* countdown / timing tower */
 
-.countdown-box {
-    margin-top: 35px;
-    padding: 20px;
-    border: 1px solid #303038;
-    background: rgba(20,20,25,.8);
-    max-width: 520px;
+#countdown-box {
+    margin-top: 32px;
+    padding: 20px 22px;
+    border: 1px solid var(--line);
+    background: rgba(19,19,24,0.85);
+    max-width: 480px;
 }
 
 .countdown-title {
-    color: #aaa;
-    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.8px;
     margin-bottom: 12px;
 }
 
-.countdown {
-    display: flex;
-    gap: 25px;
+.live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--red-bright);
+    animation: pulse 1.6s ease-in-out infinite;
 }
 
+@keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,43,37,0.5); }
+    50% { opacity: 0.55; box-shadow: 0 0 0 6px rgba(255,43,37,0); }
+}
+
+#nr { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+
+.countdown {
+    display: flex;
+    gap: 4px;
+    align-items: baseline;
+}
+
+.time-box { text-align: center; min-width: 52px; }
+
 .time-box h2 {
+    font-family: var(--mono);
     font-size: 30px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
 }
 
 .time-box span {
+    display: block;
+    font-family: var(--mono);
     font-size: 10px;
-    color: #777;
+    color: var(--text-faint);
+    letter-spacing: 0.5px;
+    margin-top: 2px;
 }
 
-/* ================= SECTIONS ================= */
-
-section {
-    padding: 80px 7%;
+.colon {
+    font-family: var(--mono);
+    font-size: 26px;
+    color: var(--text-faint);
+    transform: translateY(-6px);
 }
 
-.section-title {
-    margin-bottom: 35px;
-}
-
-.section-title small {
-    color: #e10600;
-    font-weight: bold;
-}
-
-.section-title h2 {
-    font-size: 38px;
-    margin-top: 8px;
-}
-
-/* ================= STATS ================= */
+/* =========================================================
+   STATS
+========================================================= */
 
 .stats {
     display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 15px;
-    background: #111116;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
 }
 
 .stat-card {
+    position: relative;
     padding: 30px;
-    background: #18181e;
-    border-left: 3px solid #e10600;
+    background: var(--surface);
 }
+
+.stat-card::before,
+.stat-card::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--red);
+}
+
+.stat-card::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+.stat-card::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
 
 .stat-card h3 {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.stat-card p { color: var(--text-dim); font-size: 13.5px; }
+
+/* =========================================================
+   DRIVERS
+========================================================= */
+
+/* Side popup */
+
+.side-panel {
+    position: fixed;
+    top: 70px;
+    right: -400px;
+    width: 350px;
+    height: 100vh;
+    background: black;
+    padding: 30px;
+    box-sizing: border-box;
+    z-index: 1000;
+    transition: right 0.4s ease;
+    box-shadow: -5px 0 20px rgba(0,0,0,0.2);
+}
+
+.side-panel.active {
+    right: 0;
+}
+
+#image{
+    left:50px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    border: none;
+    background: none;
     font-size: 30px;
-    margin-bottom: 8px;
+    cursor: pointer;
+    color:white;
+    font-size: 20px;
 }
 
-.stat-card p {
-    color: #888;
+.close-btn:hover { 
+    color: var(--red); 
 }
 
-/* ================= DRIVERS ================= */
+/* Background overlay */
 
-.driver-controls {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 30px;
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    z-index: 999;
 }
+
+.overlay.active {
+    display: block;
+}
+
+.driver-controls { display: flex; gap: 15px; margin-bottom: 30px; }
 
 .search {
-    padding: 14px 18px;
-    background: #18181e;
-    border: 1px solid #333;
-    color: white;
+    padding: 13px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--text);
     width: 300px;
     outline: none;
+    font-family: var(--display);
+    font-size: 14px;
+    transition: border-color 0.25s;
 }
+
+.search:focus { border-color: var(--red); }
+.search::placeholder { color: var(--text-faint); }
 
 .driver-grid {
     display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 18px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
 }
 
 .driver-card {
-    background: #16161c;
-    border: 1px solid #292932;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--team-color, var(--red));
     padding: 22px;
-    transition: .3s;
     position: relative;
     overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s;
 }
 
-.driver-card:hover {
-    transform: translateY(-7px);
-    border-color: #e10600;
+.driver-card:hover .driver-name {
+    text-decoration: underline;
+}
+
+.driver-card:hover { 
+    transform: translateY(-6px); 
+    cursor: pointer;
 }
 
 .driver-number {
-    font-size: 50px;
-    font-weight: 900;
-    color: #333;
+    font-family: var(--mono);
+    font-size: 46px;
+    font-weight: 500;
+    color: var(--text-faint);
+    line-height: 1;
 }
 
-.driver-name {
-    font-size: 22px;
-    font-weight: bold;
-    margin-top: 15px;
-}
+.driver-name { font-size: 20px; font-weight: 700; margin-top: 14px; }
 
 .driver-team {
-    color: #999;
-    margin-top: 5px;
+    color: var(--team-color, var(--text-dim));
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 4px;
 }
 
 .driver-points {
-    margin-top: 20px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
+    font-size: 12px;
+    color: var(--text-dim);
 }
 
 .driver-points strong {
-    color: #e10600;
+    font-family: var(--mono);
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 500;
 }
 
-/* ================= STANDINGS ================= */
-
-.standings-section {
-    background: #111116;
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 50px 0;
+    color: var(--text-faint);
+    font-family: var(--mono);
+    font-size: 14px;
+    display: none;
 }
 
-.table-container {
-    overflow-x: auto;
-}
+/* =========================================================
+   STANDINGS
+========================================================= */
 
-table {
+.standings-header,
+.driver-position {
+    display: flex;
+    align-items: center;
     width: 100%;
-    border-collapse: collapse;
-    min-width: 650px;
+    padding: 15px 20px;
+    box-sizing: border-box;
 }
 
-th, td {
-    padding: 18px;
-    text-align: left;
-    border-bottom: 1px solid #292932;
-}
-
-th {
-    background: #1c1c22;
-    color: #aaa;
+.standings-header {
     font-size: 12px;
-}
-
-td {
     font-weight: bold;
+    opacity: 0.6;
 }
 
 .position {
-    color: #e10600;
+    width: 40px;
+    text-align: center;
 }
 
-/* ================= RACES ================= */
+.driverh,.countryh,.teamh,.winsh,.pointsh {
+    width: 260px;    
+}
+    
+.driverh{
+    margin-left: 10%;
+}
 
-.race-grid {
+.countryh, .teamh, .winsh{
+    margin-left: 7%;
+}
+
+.pointsh{
+    margin-right: 7%;
+}
+
+.driver-info {
+    width: 180px;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.driver-info h3:hover, .driver-info img:hover {
+    cursor: pointer;
+}
+
+.driver-info h3:hover {
+    text-decoration: underline;
+}
+
+.country{
+    width: 260px;
+    margin-left: 10%;
+}
+    
+.wins{
+    width: 150px;
+    font-family: var(--mono);
+}
+
+.points {
+    width: 260px;
+    font-family: var(--mono); 
+    color: var(--red-bright);
+}
+
+.team{
+    width: 260px;
+    margin-left:10px;
+}
+
+.iimg {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 50%;
+}
+
+.timg, .tiimg{
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    object-position: center top;
+}
+
+/* =========================================================
+   RACES
+========================================================= */
+
+#race-grid {
     display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 18px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
 }
 
 .race-card {
-    background: #16161c;
-    border: 1px solid #292932;
-    padding: 25px;
-    transition: .3s;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 24px;
+    transition: transform 0.5s, border-color 0.5s;
 }
 
-.race-card:hover {
-    border-color: #e10600;
-    transform: translateY(-5px);
+.race-card:hover { border-color: var(--red); transform: translateY(-5px); }
+
+.race-card:hover h2 {
+    text-decoration: underline;
 }
 
 .race-round {
-    color: #e10600;
+    font-family: var(--mono);
+    color: var(--red-bright);
     font-size: 12px;
-    font-weight: bold;
 }
 
-.race-card h3 {
-    margin: 12px 0;
-    font-size: 23px;
+.race-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.race-location {
-    color: #999;
-    margin-bottom: 20px;
+.racetrack {
+    width: 250px;
+    height: auto;
+    display: block;
 }
+
+.race-card h3 { margin: 10px 0 4px; font-size: 21px; font-weight: 700; }
+
+.race-location { color: var(--text-dim); font-size: 13.5px; margin-bottom: 18px; }
 
 .race-info {
     display: flex;
     justify-content: space-between;
-    color: #aaa;
-    font-size: 13px;
-}
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}*/
+/* =========================================================
+   CIRCUIT EXPLORER
+========================================================= */
 
-/* ================= CIRCUIT ================= */
+.circuit { background: var(--surface); }
 
-.circuit {
-    background: #111116;
-}
-
-.circuit-layout {
+#circuitexp {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 50px;
     align-items: center;
 }
 
 .track {
-    height: 350px;
-    overflow: hidden;
-    border: 1px solid #333;
-    background: #111;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    padding: 20px;
 }
 
-.track img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
+.circuitimg { 
+    height: 400px; display: block; 
 }
-
-.circuit-info h3 {
-    font-size: 32px;
-    margin-bottom: 15px;
-}
+.circuit-info h3 { font-size: 30px; font-weight: 700; margin-bottom: 14px; }
 
 .circuit-info p {
-    color: #999;
+    color: var(--text-dim);
     line-height: 1.7;
-    margin-bottom: 25px;
+    margin-bottom: 24px;
+    font-size: 15px;
 }
 
 .circuit-details {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 12px;
 }
 
-.detail {
-    background: #18181e;
-    padding: 20px;
-}
+.detail { background: var(--surface-2); padding: 18px; }
 
 .detail span {
-    color: #777;
+    color: var(--text-faint);
     display: block;
-    font-size: 12px;
-    margin-bottom: 7px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    margin-bottom: 8px;
 }
 
-/* ================= FOOTER ================= */
+.detail strong { font-family: var(--mono); font-size: 19px; font-weight: 500; }
+
+/* =========================================================
+   FOOTER
+========================================================= */
 
 footer {
-    padding: 35px 7%;
-    background: #070709;
-    border-top: 1px solid #292932;
+    padding: 30px var(--edge);
+    background: #060607;
+    border-top: 1px solid var(--line);
     display: flex;
     justify-content: space-between;
-    color: #777;
-    font-size: 13px;
+    color: var(--text-faint);
+    font-size: 12.5px;
+    font-family: var(--mono);
 }
 
-/* ================= RESPONSIVE ================= */
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
-@media(max-width: 1000px) {
-
-    .driver-grid {
-        grid-template-columns: repeat(2,1fr);
-    }
-
-    .race-grid {
-        grid-template-columns: repeat(2,1fr);
-    }
-
-    .stats {
-        grid-template-columns: repeat(2,1fr);
-    }
+@media (max-width: 1000px) {
+    .driver-grid { grid-template-columns: repeat(2, 1fr); }
+    .race-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .circuit-layout { grid-template-columns: 1fr; }
 }
 
-@media(max-width: 700px) {
-
-    .navbar {
-        padding: 0 5%;
-    }
+@media (max-width: 700px) {
+    .navbar { padding: 0 5%; }
 
     .nav-links {
         display: none;
         position: absolute;
-        top: 70px;
+        top: 68px;
         left: 0;
         width: 100%;
-        background: #111116;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
         flex-direction: column;
-        padding: 25px;
-        gap: 20px;
+        padding: 24px;
+        gap: 18px;
     }
 
-    .nav-links.active {
-        display: flex;
-    }
+    .nav-links.active { display: flex; }
+    .menu-btn { display: block; }
 
-    .menu-btn {
-        display: block;
-    }
+    section { padding: 56px 5%; }
 
-    section {
-        padding: 60px 5%;
-    }
+    .driver-grid, .race-grid { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr 1fr; }
 
-    .driver-grid,
-    .race-grid,
-    .circuit-layout {
-        grid-template-columns: 1fr;
-    }
+    .hero { padding: 56px 5%; }
 
-    .stats {
-        grid-template-columns: 1fr 1fr;
-    }
+    .countdown { gap: 2px; }
+    .time-box { min-width: 44px; }
+    .time-box h2 { font-size: 22px; }
 
-    .hero {
-        padding: 60px 5%;
-    }
-
-    .countdown {
-        gap: 12px;
-    }
-
-    .time-box h2 {
-        font-size: 24px;
-    }
-
-    footer {
-        flex-direction: column;
-        gap: 10px;
-    }
+    footer { flex-direction: column; gap: 8px; }
 }
+
 </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
-
 <nav class="navbar">
-
-    <div class="logo">
-        F1<span>APEX</span>
-    </div>
+    <div class="logo">F1<span>APEX</span></div>
 
     <ul class="nav-links" id="navLinks">
-        <li><a href="#home">HOME</a></li>
-        <li><a href="#drivers">DRIVERS</a></li>
-        <li><a href="#standings">STANDINGS</a></li>
-        <li><a href="#races">RACES</a></li>
-        <li><a href="#circuit">CIRCUIT</a></li>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#drivers">Drivers</a></li>
+        <li><a href="#standings">Standings</a></li>
+        <li><a href="#races">Races</a></li>
+        <li><a href="#circuit">Circuit</a></li>
     </ul>
-
-    <div class="menu-btn" onclick="toggleMenu()">☰</div>
 
 </nav>
 
-
 <!-- HERO -->
-
 <section class="hero" id="home">
-
     <div class="hero-content">
+        <div class="tag">FORMULA 1 · 2026 SEASON</div>
 
-        <div class="tag">FORMULA 1 • RACING HUB</div>
+        <h1>Feel the<br><span>speed.</span></h1>
+        <img  src="https://wallpaperaccess.com/full/2180256.png" style="width:200px; display: inline;">
 
-        <h1>
-            FEEL THE<br>
-            <span>SPEED.</span>
-        </h1>
+        <p>Drivers, teams, race calendars and championship standings, tracked in one dashboard built for the grid.</p>
 
-        <p>
-            Explore drivers, teams, race calendars and championship
-            standings in one interactive Formula 1 dashboard.
-        </p>
-
-        <button class="btn" onclick="scrollToDrivers()">
-            EXPLORE DRIVERS →
-        </button>
-
-        <div class="countdown-box">
-
-            <div class="countdown-title">
-                NEXT GRAND PRIX
-            </div>
-
-            <h3 id="nextRace">ITALIAN GRAND PRIX</h3>
-
-            <br>
-
-            <div class="countdown">
-
-                <div class="time-box">
-                    <h2 id="days">00</h2>
-                    <span>DAYS</span>
-                </div>
-
-                <div class="time-box">
-                    <h2 id="hours">00</h2>
-                    <span>HOURS</span>
-                </div>
-
-                <div class="time-box">
-                    <h2 id="minutes">00</h2>
-                    <span>MINUTES</span>
-                </div>
-
-                <div class="time-box">
-                    <h2 id="seconds">00</h2>
-                    <span>SECONDS</span>
-                </div>
-
-            </div>
-
-        </div>
-
+        <button class="btn" onclick="scrollToDrivers()">View the full grid</button>
+        <br><br>
+        <button class="btn" onclick="scrollToCircuit()">View Live Circuit</button>
+        <div id="countdown-box"></div>
     </div>
-
 </section>
-
 
 <!-- STATS -->
-
 <section class="stats">
-
-    <div class="stat-card">
-        <h3>20</h3>
-        <p>Drivers</p>
-    </div>
-
-    <div class="stat-card">
-        <h3>10</h3>
-        <p>Teams</p>
-    </div>
-
-    <div class="stat-card">
-        <h3>24</h3>
-        <p>Race Weekends</p>
-    </div>
-
-    <div class="stat-card">
-        <h3>2026</h3>
-        <p>Season</p>
-    </div>
-
+    <div class="stat-card"><h3>22</h3><p>Drivers</p></div>
+    <div class="stat-card"><h3>11</h3><p>Teams</p></div>
+    <div class="stat-card"><h3>23</h3><p>Race weekends</p></div>
+    <div class="stat-card"><h3>2026</h3><p>Season</p></div>
 </section>
 
-
 <!-- DRIVERS -->
-
 <section id="drivers">
-
-    <div class="section-title">
-        <small>THE GRID</small>
-        <h2>F1 DRIVERS</h2>
+    <div class="section-head">
+        <span class="kicker">THE GRID</span>
+        <h2>F1 drivers</h2>
     </div>
 
     <div class="driver-controls">
-
-        <input
-            type="text"
-            class="search"
-            id="driverSearch"
-            placeholder="Search driver..."
-            onkeyup="searchDrivers()"
-        >
-
+        <input type="text" class="search" id="searchDriver" placeholder="Search driver…">
     </div>
 
-    <div class="driver-grid" id="driverGrid">
+    <!--SIde Panel-->
+    
+    <div id="sidePanel" class="side-panel"></div>
 
-        <div class="driver-card" data-name="lando norris">
+    <div class="driver-grid" id="driverGrid"></div>
 
-            <div class="driver-number">01</div>
-
-            <div class="driver-name">
-                Lando Norris
-            </div>
-
-            <div class="driver-team">
-                McLaren
-            </div>
-
-            <div class="driver-points">
-                <span>Points</span>
-                <strong>314</strong>
-            </div>
-
-        </div>
-
-
-        <div class="driver-card" data-name="oscar piastri">
-
-            <div class="driver-number">81</div>
-
-            <div class="driver-name">
-                Oscar Piastri
-            </div>
-
-            <div class="driver-team">
-                McLaren
-            </div>
-
-            <div class="driver-points">
-                <span>Points</span>
-                <strong>292</strong>
-            </div>
-
-        </div>
-
-
-        <div class="driver-card" data-name="max verstappen">
-
-            <div class="driver-number">03</div>
-
-            <div class="driver-name">
-                Max Verstappen
-            </div>
-
-            <div class="driver-team">
-                Red Bull Racing
-            </div>
-
-            <div class="driver-points">
-                <span>Points</span>
-                <strong>278</strong>
-            </div>
-
-        </div>
-
-
-        <div class="driver-card" data-name="charles leclerc">
-
-            <div class="driver-number">16</div>
-
-            <div class="driver-name">
-                Charles Leclerc
-            </div>
-
-            <div class="driver-team">
-                Ferrari
-            </div>
-
-            <div class="driver-points">
-                <span>Points</span>
-                <strong>245</strong>
-            </div>
-
-        </div>
-
-
-        <div class="driver-card" data-name="lewis hamilton">
-
-            <div class="driver-number">44</div>
-
-            <div class="driver-name">
-                Lewis Hamilton
-            </div>
-
-            <div class="driver-team">
-                Ferrari
-            </div>
-
-            <div class="driver-points">
-                <span>Points</span>
-                <strong>221</strong>
-            </div>
-
-        </div>
-
-
-        <div class="driver-card" data-name="george russell">
-
-            <div class="driver-number">63</div>
-
-            <div class="driver-name">
-                George Russell
-            </div>
-
-            <div class="driver-team">
-                Mercedes
-            </div>
-
-            <div class="driver-points">
-                <span>Points</span>
-                <strong>205</strong>
-            </div>
-
-        </div>
-
-
-        <div class="driver-card" data-name="fernando alonso">
-
-            <div class="driver-number">14</div>
-
-            <div class="driver-name">
-                Fernando Alonso
-            </div>
-
-            <div class="driver-team">
-                Aston Martin
-            </div>
-
-            <div class="driver-points">
-                <span>Points</span>
-                <strong>118</strong>
-            </div>
-
-        </div>
-
-
-        <div class="driver-card" data-name="alexander albon">
-
-            <div class="driver-number">23</div>
-
-            <div class="driver-name">
-                Alexander Albon
-            </div>
-
-            <div class="driver-team">
-                Williams
-            </div>
-
-            <div class="driver-points">
-                <span>Points</span>
-                <strong>92</strong>
-            </div>
-
-        </div>
-
-    </div>
+    <p class="no-results" id="noResults">No driver matches that search.</p>
 
 </section>
 
-
 <!-- STANDINGS -->
-
 <section class="standings-section" id="standings">
-
-    <div class="section-title">
-        <small>CHAMPIONSHIP</small>
-        <h2>DRIVER STANDINGS</h2>
+    <div class="section-head">
+        <span class="kicker">CHAMPIONSHIP</span>
+        <h2>Driver standings</h2>
     </div>
-
-    <div class="table-container">
-
-        <table>
-
-            <thead>
-
-                <tr>
-                    <th>POS</th>
-                    <th>DRIVER</th>
-                    <th>TEAM</th>
-                    <th>WINS</th>
-                    <th>POINTS</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <tr>
-                    <td class="position">01</td>
-                    <td>Lando Norris</td>
-                    <td>McLaren</td>
-                    <td>6</td>
-                    <td>314</td>
-                </tr>
-
-                <tr>
-                    <td class="position">02</td>
-                    <td>Oscar Piastri</td>
-                    <td>McLaren</td>
-                    <td>5</td>
-                    <td>292</td>
-                </tr>
-
-                <tr>
-                    <td class="position">03</td>
-                    <td>Max Verstappen</td>
-                    <td>Red Bull Racing</td>
-                    <td>4</td>
-                    <td>278</td>
-                </tr>
-
-                <tr>
-                    <td class="position">04</td>
-                    <td>Charles Leclerc</td>
-                    <td>Ferrari</td>
-                    <td>2</td>
-                    <td>245</td>
-                </tr>
-
-                <tr>
-                    <td class="position">05</td>
-                    <td>Lewis Hamilton</td>
-                    <td>Ferrari</td>
-                    <td>1</td>
-                    <td>221</td>
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
+    <div id="driverStandings"></div>
 </section>
 
 
 <!-- RACES -->
-
 <section id="races">
-
-    <div class="section-title">
-        <small>2026 SEASON</small>
-        <h2>RACE CALENDAR</h2>
+    <div class="section-head">
+        <span class="kicker">2026 SEASON</span>
+        <h2>Race calendar</h2>
     </div>
 
-    <div class="race-grid">
-
-        <div class="race-card">
-            <span class="race-round">ROUND 01</span>
-            <h3>Australian GP</h3>
-            <p class="race-location">Melbourne, Australia</p>
-            <div class="race-info">
-                <span>March 15</span>
-                <span>58 Laps</span>
-            </div>
-        </div>
-
-        <div class="race-card">
-            <span class="race-round">ROUND 02</span>
-            <h3>Chinese GP</h3>
-            <p class="race-location">Shanghai, China</p>
-            <div class="race-info">
-                <span>March 22</span>
-                <span>56 Laps</span>
-            </div>
-        </div>
-
-        <div class="race-card">
-            <span class="race-round">ROUND 03</span>
-            <h3>Japanese GP</h3>
-            <p class="race-location">Suzuka, Japan</p>
-            <div class="race-info">
-                <span>April 5</span>
-                <span>53 Laps</span>
-            </div>
-        </div>
-
-        <div class="race-card">
-            <span class="race-round">ROUND 04</span>
-            <h3>Bahrain GP</h3>
-            <p class="race-location">Sakhir, Bahrain</p>
-            <div class="race-info">
-                <span>April 19</span>
-                <span>57 Laps</span>
-            </div>
-        </div>
-
-        <div class="race-card">
-            <span class="race-round">ROUND 05</span>
-            <h3>Miami GP</h3>
-            <p class="race-location">Miami, USA</p>
-            <div class="race-info">
-                <span>May 3</span>
-                <span>57 Laps</span>
-            </div>
-        </div>
-
-        <div class="race-card">
-            <span class="race-round">ROUND 06</span>
-            <h3>Monaco GP</h3>
-            <p class="race-location">Monte Carlo, Monaco</p>
-            <div class="race-info">
-                <span>May 24</span>
-                <span>78 Laps</span>
-            </div>
-        </div>
-
-        <div class="race-card">
-            <span class="race-round">ROUND 06</span>
-            <h3>Monaco GP</h3>
-            <p class="race-location">Monte Carlo, Monaco</p>
-            <div class="race-info">
-                <span>May 24</span>
-                <span>78 Laps</span>
-            </div>
-        </div>
-
-    </div>
+    <div id="race-grid"></div>
 
 </section>
 
-
-<!-- CIRCUIT -->
-
+<!-- CIRCUIT EXPLORER -->
 <section class="circuit" id="circuit">
-
-    <div class="section-title">
-        <small>TRACK DATA</small>
-        <h2>CIRCUIT EXPLORER</h2>
+    <div class="section-head">
+        <span class="kicker">TRACK DATA</span>
+        <h2>Circuit explorer</h2>
     </div>
 
-    <div class="circuit-layout">
-
-        <div class="track">
-            <img src="images/monza-track.png" alt="Monza Circuit">
-        </div>
-
-        <div class="circuit-info">
-
-            <h3>Monza Circuit</h3>
-
-            <p>
-                One of the fastest circuits on the Formula 1 calendar.
-                Known for its long straights, heavy braking zones and
-                legendary racing atmosphere.
-            </p>
-
-            <div class="circuit-details">
-
-                <div class="detail">
-                    <span>LENGTH</span>
-                    5.793 KM
-                </div>
-
-                <div class="detail">
-                    <span>CORNERS</span>
-                    11
-                </div>
-
-                <div class="detail">
-                    <span>LAPS</span>
-                    53
-                </div>
-
-                <div class="detail">
-                    <span>RACE DISTANCE</span>
-                    306.720 KM
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
+    <div id="circuitexp"></div>
 </section>
-
 
 <!-- FOOTER -->
-
 <footer>
-
     <span>© 2026 F1 APEX</span>
-
-    <span>Built with HTML • CSS • JavaScript</span>
-
 </footer>
-
-
 <script>
 
-/* ================= MOBILE MENU ================= */
-
-function toggleMenu() {
-
-    document
-        .getElementById("navLinks")
-        .classList
-        .toggle("active");
-
-}
-
-
-/* ================= SCROLL ================= */
-
 function scrollToDrivers() {
+    document.getElementById("drivers").scrollIntoView({ behavior: "smooth" });
+}
 
-    document
-        .getElementById("drivers")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
+function scrollToCircuit() {
+    document.getElementById("circuit").scrollIntoView({ behavior: "smooth" });
+}
 
+const data = {
+    NOR: { num:"01", name: "Lando Norris", team: "McLaren", points: "171", position: "4th", country: "United Kingdom", wins:"2", nickname:"NOR",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/mclaren/lannor01/2026mclarenlannor01right.webp"
+    },
+
+    PIA: { num:"81", name: "Oscar Pisatri", team: "McLaren", points: "116", position: "7th", country: "Australia", wins:"0", nickname:"PIA",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/mclaren/oscpia01/2026mclarenoscpia01right.webp"
+    },
+
+    VER: { num:"03", name: "Max Verstappen", team: "Red Bull Racing", points: "127", position: "6th", country: "Netherlands", wins:"0", nickname:"VER",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/redbullracing/maxver01/2026redbullracingmaxver01right.webp"
+    },
+
+    HAD: { num:"06", name: "Isack Hadjar", team: "Red Bull Racing", points: "71", position: "8th", country: "France", wins:"0", nickname:"HAD",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/redbullracing/isahad01/2026redbullracingisahad01right.webp"
+    },
+
+    LEC: { num:"16", name: "Charles Leclerc", team: "Ferrari", points: "155", position: "5th",country: "Monaco", wins:"1", nickname:"LEC",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/ferrari/chalec01/2026ferrarichalec01right.webp"
+    },
+
+    HAM: { num:"44", name: "Lewis Hamilton", team: "Ferrari", points: "191", position: "3rd", country: "United Kingdom", wins:"1", nickname:"HAM",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/ferrari/lewham01/2026ferrarilewham01right.webp"
+    },
+
+    RUS: { num:"63", name: "George Russell", team: "Mercedes", points: "201", position: "2nd", country: "United Kingdom", wins:"2", nickname:"RUS",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/mercedes/georus01/2026mercedesgeorus01right.webp"
+    },
+
+    ANT: { num:"12", name: "Kimi Antonelli", team: "Mercedes", points: "267", position: "1st", country: "Italy", wins:"8", nickname:"ANT",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/mercedes/andant01/2026mercedesandant01right.webp"
+    },
+
+    ALB: { num:"23", name: "Alexander Albon", team: "Williams", points: "5", position: "17th", country: "Thailand", wins:"0", nickname:"ALB",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/williams/alealb01/2026williamsalealb01right.webp"
+    },
+
+    SAI: { num:"55", name: "Carlo Sainz", team: "Williams", points: "6", position: "16th", country: "Spain", wins:"0", nickname:"SAI",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/williams/carsai01/2026williamscarsai01right.webp"
+    },
+
+    ALO: { num:"14", name: "Fernando Alonso", team: "Aston Martin", points: "3", position: "19th", country: "Spain", wins:"0", nickname:"ALO",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/astonmartin/feralo01/2026astonmartinferalo01right.webp"
+    },
+
+    STR: { num:"15", name: "Lance Stroll", team: "Aston Martin", points: "0", position: "20th", country: "Canada", wins:"0", nickname:"STR",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/astonmartin/lanstr01/2026astonmartinlanstr01right.webp"
+    },
+
+    LIN: { num:"41", name: "Arvid Lindblad", team: "Racing Bulls", points: "29", position: "11th", country: "United Kingdom", wins:"0", nickname:"LIN",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/racingbulls/arvlin01/2026racingbullsarvlin01right.webp"
+    },
+
+    LAW: { num:"30", name: "Liam Lawson", team: "Racing Bulls", points: "51", position: "9th", country: "New Zealand", wins:"0", nickname:"LAW",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/racingbulls/lialaw01/2026racingbullslialaw01right.webp"
+    },
+
+    GAS: { num:"10", name: "Pierre Gasly", team: "Alpine", points: "41", position: "10th", country: "France", wins:"0", nickname:"GAS",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/alpine/piegas01/2026alpinepiegas01right.webp"
+    },
+
+    COL: { num:"43", name: "Franco Colapinto", team: "Alpine", points: "21", position: "12th", country: "Argentina", wins:"0", nickname:"COL",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/alpine/fracol01/2026alpinefracol01right.webp"
+    },
+
+    OCO: { num:"31", name: "Esteban Ocon", team: "Haas F1 Team", points: "3", position: "18th", country: "France", wins:"0", nickname:"OCO",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/haasf1team/estoco01/2026haasf1teamestoco01right.webp"
+    },
+
+    BEA: { num:"87", name: "Oliver Bearman", team: "Haas F1 Team", points: "18", position: "13th", country: "United Kingdom", wins:"0", nickname:"BEA",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/haasf1team/olibea01/2026haasf1teamolibea01right.webp"
+    },
+
+    HUL: { num:"27", name: "Niko Hülkenberg", team: "Audi", points: "6", position: "15th", country: "Germany", wins:"0", nickname:"HUL",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/audi/nichul01/2026audinichul01right.webp"
+    },
+
+    BOR: { num:"05", name: "Gabriel Bortoleto", team: "Audi", points: "10", position: "14th", country: "Brazil", wins:"0", nickname:"BOR",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/audi/gabbor01/2026audigabbor01right.webp"
+    },
+
+    PER: { num:"11", name: "Sergio Perez", team: "Cadillac", points: "0", position: "22nd", country: "Mexico", wins:"0", nickname:"PER",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/cadillac/serper01/2026cadillacserper01right.webp"
+    },
+
+    BOT: { num:"77", name: "Valtteri Bottas", team: "Cadillac", points: "0", position: "21st", country: "Finland", wins:"0", nickname:"BOT",
+    img:"https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/cadillac/valbot01/2026cadillacvalbot01right.webp"
+    },
+}
+
+const teamimg = {
+    "Red Bull Racing": {
+        img:"https://media.formula1.com/image/upload/c_lfill,w_64/q_auto/v1740000001/common/f1/2026/redbullracing/2026redbullracinglogowhite.webp", code: "rgb(54, 113, 198)"
+    },
+    "McLaren": {
+        img:"https://media.formula1.com/image/upload/c_lfill,w_64/q_auto/v1740000001/common/f1/2026/mclaren/2026mclarenlogowhite.webp", code: "rgb(255, 128, 0)"
+    },
+    "Ferrari": {
+        img:"https://media.formula1.com/image/upload/c_lfill,w_64/q_auto/v1740000001/common/f1/2026/ferrari/2026ferrarilogowhite.webp", code: "rgb(232, 0, 45)"
+    },
+    "Mercedes":{
+        img:"https://media.formula1.com/image/upload/c_lfill,w_64/q_auto/v1740000001/common/f1/2026/mercedes/2026mercedeslogowhite.webp", code: "rgb(39, 244, 210)" 
+    },
+    "Alpine": {
+        img:"https://media.formula1.com/image/upload/c_lfill,w_64/q_auto/v1740000001/common/f1/2026/alpine/2026alpinelogowhite.webp", code: "rgb(0, 161, 232)"
+    },
+    "Racing Bulls": {
+        img:"https://media.formula1.com/image/upload/c_lfill,w_64/q_auto/v1740000001/common/f1/2026/racingbulls/2026racingbullslogowhite.webp", code: "rgb(102, 146, 255)"
+    },
+    "Aston Martin": {
+        img:"https://media.formula1.com/image/upload/c_lfill,w_64/q_auto/v1740000001/common/f1/2026/astonmartin/2026astonmartinlogowhite.webp", code: "rgb(34, 153, 113)"
+    },
+    "Haas F1 Team": {
+        img:"https://media.formula1.com/image/upload/c_lfill,w_64/q_auto/v1740000001/common/f1/2026/haasf1team/2026haasf1teamlogowhite.webp", code: "rgb(222, 225, 226)"
+    },
+    "Audi": {
+        img:"https://media.formula1.com/image/upload/c_lfill,w_40/q_auto/v1740000001/common/f1/2026/audi/2026audilogowhite.webp", code: "rgb(255, 45, 0)"
+    },
+    "Williams": {
+        img:"https://media.formula1.com/image/upload/c_lfill,w_64/q_auto/v1740000001/common/f1/2026/williams/2026williamslogowhite.webp", code: "rgb(24, 104, 219)"
+    },
+    "Cadillac": {
+        img:"https://media.formula1.com/image/upload/c_lfill,w_64/q_auto/v1740000001/common/f1/2026/cadillac/2026cadillaclogowhite.webp", code: "rgb(170, 170, 173)"
+    },
+}
+
+const trackdata = {
+    r1:{
+        round:"Round 01", gp:"Australian", circuit:"Albert Park Circuit", loc:"Melbourne", cnty:"Australia", date:"06 - 08 MAR",
+        race:"March 8, 2026 09:30:00", laps:"58", fltime:"1:19.813", clength:"5.278", rdist:"306.124", fgp:"1996", cnr:"14",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackmelbournedetailed.webp",
+        desc:"Albert Park Circuit is a fast and flowing street circuit located around the beautiful Albert Park in Melbourne. Its combination of high-speed sections and technical corners demands precision and strong car balance. The Australian Grand Prix creates an exciting start to the Formula 1 season."
+    },
+    r2:{
+        round:"Round 02", gp:"Chinese", circuit:"Shanghai International Circuit", loc:"Shanghai", cnty:"China", date:"13 - 15 MAR",
+        race:"March 15, 2026 12:30:00", laps:"56", fltime:"1:32.238", clength:"5.451", rdist:"305.066", fgp:"2004", cnr:"16",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackshanghaidetailed.webp",
+        desc:"Shanghai International Circuit is a modern track known for its long straights and challenging opening sequence of corners. Its unique layout requires a careful balance between straight-line speed and cornering performance. The circuit also places significant demands on tyre management."
+    },
+    r3:{
+        round:"Round 03", gp:"Japanese", circuit:"Suzuka Circuit", loc:"Japan", cnty:"Japan", date:"27 - 29 MAR",
+        race:"March 29, 2026 10:30:00", laps:"53", fltime:"1:30.965", clength:"5.807", rdist:"307.471", fgp:"1987", cnr:"18",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026tracksuzukadetailed.webp",
+        desc:"Suzuka Circuit is a legendary figure-eight circuit famous for its fast and flowing layout. Corners such as the Esses, Spoon Curve and 130R demand precision, confidence and commitment. Its technical nature makes it one of the most challenging circuits in Formula 1."
+    },
+    r4:{
+        round:"Round 04", gp:"Miami", circuit:"Miami International Autodrome", loc:"Miami Gardens", cnty:"Miami", date:"01 - 03 MAY",
+        race:"May 3, 2026 22:30:00", laps:"57", fltime:"1:29.708", clength:"5.412", rdist:"308.326", fgp:"2022", cnr:"19",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackmiamidetailed.webp",
+        desc:"Miami International Autodrome is a modern circuit built around the Hard Rock Stadium complex. The track combines long straights, technical corners and changes in elevation. Its varied layout provides several opportunities for close racing and overtaking."
+    },
+    r5:{
+        round:"Round 05", gp:"Canadian", circuit:"Circuit Gilles-Villeneuve", loc:"Canada", cnty:"Canada", date:"22 - 25 MAY",
+        race:"May 25, 2026 01:30:00", laps:"70", fltime:"1:13.078", clength:"4.361", rdist:"305.27", fgp:"1978", cnr:"14",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackmontrealdetailed.webp",
+        desc:"Circuit Gilles-Villeneuve is a semi-permanent circuit located on an island in Montreal. Long straights are connected by heavy braking zones and challenging chicanes. The circuit rewards strong braking performance, acceleration and precise driving."
+    },
+    r6:{
+        round:"Round 06", gp:"Monaco", circuit:"Circuit de Monaco", loc:"Monaco", cnty:"Monoco", date:"05 - 07 JUN",
+        race:"June 7, 2026 18:30:00", laps:"78", fltime:"1:12.909", clength:"3.337", rdist:"260.286", fgp:"1950", cnr:"19",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackmontecarlodetailed.webp",
+        desc:"Circuit de Monaco is one of Formula 1's most famous street circuits, running through the narrow streets of Monte Carlo. Its tight corners, barriers and limited overtaking opportunities demand absolute precision. Qualifying performance is particularly important around this historic venue."
+    },
+    r7:{
+        round:"Round 07", gp:"Barcelona", circuit:"Circuit de Barcelona-Catalunya", loc:"Barcelona", cnty:"Barcelona-Catalunya", date:"12 - 14 JUN",
+        race:"June 14, 2026 18:30:00", laps:"66", fltime:"1:15.743", clength:"4.657", rdist:"307.236", fgp:"1991", cnr:"14",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackcatalunyadetailed.webp",
+        desc:"Circuit de Barcelona-Catalunya is a technical circuit featuring a mixture of high-speed and slow corners. Its varied layout makes aerodynamic balance, tyre management and mechanical grip important. The circuit provides a comprehensive test of an F1 car's overall performance."
+    },
+    r8:{
+        round:"Round 08", gp:"Austrian", circuit:"Red Bul Ring", loc:"Styria", cnty:"Austria", date:"24 - 26 JUN",
+        race:"June 26, 2026 18:30:00", laps:"71", fltime:"1:07.924", clength:"4.326", rdist:"307.026", fgp:"1970", cnr:"10",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackspielbergdetailed.webp",
+        desc:"Red Bull Ring is a short and fast circuit located in the Austrian countryside. Its long straights, elevation changes and heavy braking zones create exciting opportunities for overtaking. Strong acceleration and efficient aerodynamic performance are especially valuable here."
+    },
+    r9:{
+        round:"Round 09", gp:"British", circuit:"Silverstone Circuit", loc:"UK", cnty:"Great Britain", date:"05 - 07 JUL",
+        race:"July 7, 2026 19:30:00", laps:"52", fltime:"1:27.097", clength:"5.891", rdist:"306.198", fgp:"1950", cnr:"18",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026tracksilverstonedetailed.webp",
+        desc:"Silverstone Circuit is one of the most historic venues in Formula 1 and hosted the first World Championship Grand Prix. Its famous high-speed corners such as Copse, Maggotts and Becketts demand confidence and precision. The circuit is widely known for producing fast and challenging racing."
+    },
+    r10:{
+        round:"Round 10", gp:"Belgian", circuit:"Circuit de Spa-Francorchamps", cnty:"Belgium", loc:"Belgium", date:"17 - 19 JUL",
+        race:"July 19, 2026 18:30:00", laps:"44", fltime:"1:44.704", clength:"7.004", rdist:"308.054", fgp:"1950", cnr:"19",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackspafrancorchampsdetailed.webp",
+        desc:"Circuit de Spa-Francorchamps is a legendary circuit surrounded by the forests of the Belgian Ardennes. Its dramatic elevation changes, long straights and famous Eau Rouge section create a unique challenge. Changing weather conditions can make the race even more unpredictable."
+    },
+    r11:{
+        round:"Round 11", gp:"Hungarian", circuit:"Hungaroring", loc:"Hungary", cnty:"Hungary", date:"24 - 26 JUL",
+        race:"July 26, 2026 18:30:00", laps:"70", fltime:"1:16.627", clength:"4.391", rdist:"306.63", fgp:"1986", cnr:"14",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackhungaroringdetailed.webp",
+        desc:"Hungaroring is a tight and technical circuit located near Budapest. Its continuous sequence of corners makes overtaking difficult and places greater importance on qualifying performance. Good tyre management and consistent pace are essential throughout the race."
+    },
+    r12:{
+        round:"Round 12", gp:"Dutch", circuit:"Circuit Zandvoort", loc:"North Holland", cnty:"Netherlands", date:"21 - 23 AUG",
+        race:"August 23, 2026 18:30:00", laps:"72", fltime:"1:11.097", clength:"4.259", rdist:"306.592", fgp:"1952", cnr:"14",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackzandvoortdetailed.webp",
+        desc:"Circuit Zandvoort is a compact seaside circuit known for its fast corners and dramatic elevation changes. Its distinctive banked turns create a unique challenge for both drivers and engineers. A well-balanced car is essential for maintaining speed through its flowing sections."
+    },
+    r13:{
+        round:"Round 13", gp:"Italian", circuit:"Autodromo Nazionale Monza", loc:"Lombardy", cnty:"Italy", date:"04 - 06 SEP",
+        race:"September 6, 2026 18:30:00", laps:"53", fltime:"1:20.901", clength:"5.793", rdist:"306.72", fgp:"1950", cnr:"11",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackmonzadetailed.webp",
+        desc:"Autodromo Nazionale Monza is famously known as the Temple of Speed. Its long straights and heavy braking zones require low aerodynamic drag and excellent straight-line performance. The historic Italian venue is one of the fastest circuits on the Formula 1 calendar."
+    },
+    r14:{
+        round:"Round 14", gp:"Spanish", circuit:"Madring", loc:"Madrid", cnty:"Spain", date:"11 - 13 SEP",
+        race:"September 13, 2026 18:30:00", laps:"57", fltime:"1:35.587", clength:"5.414", rdist:"308.399", fgp:"2026", cnr:"22",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackmadringdetailed.webp",
+        desc:"Madring is Madrid's new Formula 1 circuit introduced to the calendar in 2026. The modern venue combines fast sections, technical corners and challenging changes in direction. It brings a new setting and character to the Spanish Grand Prix."
+    },
+    r15:{
+        round:"Round 15", gp:"Azerbaijan", circuit:"Baku City Circuit", loc:"Azerbaijan", cnty:"Azerbaijan", date:"24 - 26 SEP",
+        race:"September 26, 2026 16:30:00", laps:"51", fltime:"1:43.009", clength:"6.003", rdist:"306.049", fgp:"2016", cnr:"20",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackbakudetailed.webp",
+        desc:"Baku City Circuit is a spectacular street circuit combining extremely long straights with a narrow historic section. The track requires teams to balance maximum speed with enough downforce for its technical areas. Its unique layout can create dramatic racing and overtaking opportunities."
+    },
+    r16:{
+        round:"Round 16", gp:"Bharain", circuit:"Sepang International Circuit", loc:"Bahrain", cnty:"Bahrain", date:"09 - 11 OCT",
+        race:"October 11, 2026 12:30:00", laps:"62", fltime:"1:34.080", clength:"5.543", rdist:"310.418", fgp:"1999", cnr:"15",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackkualalumpurdetailed.webp",
+        desc:"Sepang International Circuit is a wide and fast circuit located near Kuala Lumpur, Malaysia. Its long straights, high-speed corners and demanding technical sections provide a complete test for an F1 car. Hot and humid conditions also make tyre and driver management important."
+    },
+    r17:{
+        round:"Round 17", gp:"Singapore", circuit:"Marina Bay Street Circuit", loc:"Singapore", cnty:"Singapore", date:"09 - 11 OCT",
+        race:"October 11, 2026 17:30:00", laps:"62", fltime:"1:33.808", clength:"4.927", rdist:"305.337", fgp:"2008", cnr:"19",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026tracksingaporedetailed.webp",
+        desc:"Marina Bay Street Circuit is a demanding night-time street circuit located in the heart of Singapore. Its tight corners, heavy braking zones and close barriers leave little room for mistakes. The hot and humid conditions add another challenge to this physically demanding race."
+    },
+    r18:{
+        round:"Round 18", gp:"United States", circuit:"Circuit of The Americas", loc:"Texas", cnty:"United States", date:"23 - 25 OCT",
+        race:"October 25, 2026 01:30:00", laps:"56", fltime:"1:36.169", clength:"5.513", rdist:"308.432", fgp:"2012", cnr:"14",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackaustindetailed.webp",
+        desc:"Circuit of the Americas is a fast and technical circuit located in Austin, Texas. Its dramatic climb into Turn 1 is followed by a varied combination of high-speed and technical corners. The circuit tests aerodynamic efficiency, braking performance and overall car balance."
+    },
+    r19:{
+        round:"Round 19", gp:"Mexican", circuit:"Autódromo Hermanos Rodríguez", loc:"Mexico", cnty:"Mexico", date:"30 OCT - 01 NOV",
+        race:"November 01, 2026 01:30:00", laps:"71", fltime:"1:17.774", clength:"4.304", rdist:"305.354", fgp:"1963", cnr:"17",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackmexicocitydetailed.webp",
+        desc:"Autódromo Hermanos Rodríguez is located at high altitude in Mexico City, creating unique challenges for the cars. The thinner air affects aerodynamic downforce, engine performance and cooling. Its famous stadium section provides an energetic atmosphere during the Mexican Grand Prix."
+    },
+    r20:{
+        round:"Round 20", gp:"Brazilian", circuit:"Autódromo José Carlos Pace", loc:"Brazil", cnty:"Brazil", date:"06 - 08 NOV",
+        race:"November 08, 2026 22:30:00", laps:"71", fltime:"1:10.540", clength:"4.309", rdist:"305.879", fgp:"1973", cnr:"15",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackinterlagosdetailed.webp",
+        desc:"Autódromo José Carlos Pace, commonly known as Interlagos, is a historic and undulating circuit in São Paulo. Its fast corners, elevation changes and challenging braking zones create an exciting layout. Unpredictable weather can also play an important role during the Brazilian Grand Prix."
+    },
+    r21:{
+        round:"Round 21", gp:"Las Vegas", circuit:"Las Vegas Strip Circuit", loc:"Las Vegas", cnty:"Las Vegas", date:"19 - 21 NOV",
+        race:"November 21, 2026 09:30:00", laps:"50", fltime:"1:33.365", clength:"6.201", rdist:"309.958", fgp:"2023", cnr:"17",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026tracklasvegasdetailed.webp",
+        desc:"Las Vegas Strip Circuit is a high-speed street circuit running through the centre of Las Vegas. Its exceptionally long straight allows the cars to reach very high speeds before heavy braking zones. The spectacular night-time setting gives the race a distinctive atmosphere."
+    },
+    r22:{
+        round:"Round 22", gp:"Qatar", circuit:"Lusail International Circuit", loc:"Qatar", cnty:"Qatar", date:"27 - 29 NOV",
+        race:"November 19, 2026 21:30:00", laps:"57", fltime:"1:22.384", clength:"5.419", rdist:"308.611", fgp:"2021", cnr:"16",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026tracklusaildetailed.webp",
+        desc:"Lusail International Circuit is a fast-flowing circuit located near Doha, Qatar. Its long sequences of corners place significant demands on tyres and require a well-balanced car. The floodlit night-race setting adds to the distinctive character of the venue."
+    },
+    r23:{
+        round:"Round 23", gp:"Abu Dhabi", circuit:"Yas Marina Circuit", loc:"Abu Dhabi", cnty:"Abu Dhabi", date:"04 - 06 DEC",
+        race:"December 06, 2026 18:30:00", laps:"58", fltime:"1:25.637", clength:"5.281", rdist:"306.188", fgp:"2009", cnr:"16",
+        image:"https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000001/common/f1/2026/track/2026trackyasmarinacircuitdetailed.webp",
+        desc:"Yas Marina Circuit is a modern Formula 1 venue located on Yas Island in Abu Dhabi. Its combination of flowing corners, long straights and technical sections provides a varied racing challenge. The transition from sunset to night makes it a spectacular setting for the season finale."
+    },
+} 
+
+//pop up window
+
+function openDriverDetails(id) {
+
+    const popup = document.getElementById("sidePanel");
+
+    const item = data[id];
+
+    popup.innerHTML = `
+    <button class="close-btn" onclick="closeDetails()">X</button>
+
+    <h2>${item.name}</h2>
+
+    <div class="details">
+        <p><strong>Driver Number: </strong>${item.num}</span></p>
+        <p><strong>Team: </strong>${item.team}</p>
+        <p><strong>Points: </strong>${item.points}</p>
+        <p><strong>Position: </strong>${item.position}</p>
+        <p><strong>Country: </strong>${item.country}</p>
+        <img src="${item.img}">
+    </div>
+    `;
+
+    document.getElementById("sidePanel").classList.add("active");
+    document.getElementById("overlay").classList.add("active");
 }
 
 
-/* ================= DRIVER SEARCH ================= */
+function closeDetails() {
 
-function searchDrivers() {
+    document.getElementById("sidePanel").classList.remove("active");
+    document.getElementById("overlay").classList.remove("active");
 
-    const input =
-        document
-        .getElementById("driverSearch")
-        .value
-        .toLowerCase();
+}
 
-    const cards =
-        document.querySelectorAll(".driver-card");
+//for standings
 
-    cards.forEach(card => {
+const standings = document.getElementById("driverStandings");
 
-        const name =
-            card.getAttribute("data-name");
+const drivers = Object.values(data);
 
-        if(name.includes(input)) {
+// Points highest → lowest
+drivers.sort((a, b) => b.points - a.points);
+//header
+standings.innerHTML = `
+    <div class="standings-header">
+        <div class="position">POS</div>
 
-            card.style.display = "block";
+        <div class="driverh">
+            DRIVER
+        </div>
 
-        } else {
+        <div class="countryh">
+            COUNTRY
+        </div>
 
-            card.style.display = "none";
+        <div class="teamh">
+            TEAM
+        </div>
 
-        }
+        <div class="winsh">
+            WINS
+        </div>
 
+        <div class="pointsh">
+            POINTS
+        </div>
+    </div>
+`;
+//details
+drivers.forEach((driver, index) => {
+
+    const position = index + 1;
+
+    
+    standings.innerHTML += `
+        <div class="driver-position">
+
+            <div class="position">
+                ${position}
+            </div>
+
+            <img class="iimg" onclick="openDriverDetails('${driver.nickname}')"  src="${driver.img}" alt="${driver.name}">
+
+            <div class="driver-info">
+                <h3 onclick="openDriverDetails('${driver.nickname}')">${driver.name}</h3>
+
+            </div>
+            <div class="country">
+                <p>${driver.country}</p>
+            </div>
+
+            <div class="timg" style="background-color: ${teamimg[driver.team].code}">
+                <img class="tiimg" src="${teamimg[driver.team].img}">
+            </div>
+
+            <div class="team" style="color: ${teamimg[driver.team].code}">
+                <p>${driver.team}</p>
+            </div>
+
+            <div class="wins">
+                <p>${driver.wins}</p>
+            </div>
+
+            <div class="points">
+                ${driver.points}
+            </div>
+
+        </div>
+    `;
+});
+
+//for driver grid
+const driverGrid = document.getElementById("driverGrid");
+
+function displayDrivers(drivers) {
+
+    driverGrid.innerHTML = "";
+
+    drivers.forEach((driver) => {
+
+        const team = teamimg[driver.team];
+
+        driverGrid.innerHTML += `
+            <div class="driver-card" style="--team-color: ${team.code}" onclick="openDriverDetails('${driver.nickname}')">
+
+                <div class="driver-number">
+                    ${driver.num}
+                </div>
+
+                <h2 class="driver-name">${driver.name}</h2>
+
+                <div class="driver-team">
+                    ${driver.team}
+                </div>
+
+                <div class="card-line"></div>
+
+                <div class="driver-points">
+                    <span>Points</span>
+                    <strong>${driver.points}</strong>
+                </div>
+
+            </div>
+        `;
     });
-
 }
 
+displayDrivers(Object.values(data));
 
-/* ================= COUNTDOWN ================= */
+// for search
 
-const raceDate =
-    new Date("September 6, 2026 15:00:00").getTime();
+document.getElementById("searchDriver").addEventListener("input", function () {
 
+    const search = this.value.toLowerCase();
+
+    const filteredDrivers = Object.values(data).filter(driver =>
+        driver.name.toLowerCase().includes(search) ||
+        driver.team.toLowerCase().includes(search)
+    );
+
+    displayDrivers(filteredDrivers);
+});
+
+const trackGrid = document.getElementById("race-grid");
+
+function displayTracks(tracks) {
+
+    trackGrid.innerHTML = "";
+
+    Object.values(tracks).forEach(track => {
+
+        trackGrid.innerHTML += `
+
+            <div class="race-card">
+                <span class="race-round">${track.round}</span>
+                <div class="race-title">
+                    <div>
+                        <h2>${track.cnty}</h2>
+                        <h3>${track.gp} GP</h3>
+                        <p class="race-location">${track.circuit}, ${track.loc}</p>
+                    </div>
+                    <img class="racetrack" src="${track.image}">
+                </div>
+                <div class="race-info"><span>${track.date}</span><span>${track.laps}</span></div>
+            </div>
+        `;
+    });
+}
+
+displayTracks(trackdata);
 
 function updateCountdown() {
 
-    const now =
-        new Date().getTime();
+    const now = new Date();
 
-    const difference =
-        raceDate - now;
-
-    if(difference <= 0) {
-
-        document.getElementById("days").innerText = "00";
-        document.getElementById("hours").innerText = "00";
-        document.getElementById("minutes").innerText = "00";
-        document.getElementById("seconds").innerText = "00";
-
-        return;
-
-    }
-
-    const days =
-        Math.floor(
-            difference /
-            (1000 * 60 * 60 * 24)
+    const upcomingRaces = Object.values(trackdata)
+        .filter(race => new Date(race.race) > now)
+        .sort((a, b) =>
+            new Date(a.race) - new Date(b.race)
         );
 
-    const hours =
-        Math.floor(
-            (difference /
-            (1000 * 60 * 60)) % 24
-        );
+    if (upcomingRaces.length === 0) return;
 
-    const minutes =
-        Math.floor(
-            (difference /
-            (1000 * 60)) % 60
-        );
+    const nextRace = upcomingRaces[0];
+    
+    const raceDate = new Date(nextRace.race)
+    const difference = raceDate - now;
 
-    const seconds =
-        Math.floor(
-            (difference /
-            1000) % 60
-        );
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((difference / (1000 * 60)) % 60);
+    const seconds = Math.floor((difference / 1000) % 60);
 
+    const cond =  document.getElementById("countdown-box");
 
-    document.getElementById("days")
-        .innerText = String(days).padStart(2,"0");
+    cond.innerHTML =  `
+        <div class="countdown-title"><span class="live-dot"></span>NEXT GRAND PRIX</div>
 
-    document.getElementById("hours")
-        .innerText = String(hours).padStart(2,"0");
+        <h3 id="nr">${nextRace.gp} Grand Prix</h3>
 
-    document.getElementById("minutes")
-        .innerText = String(minutes).padStart(2,"0");
-
-    document.getElementById("seconds")
-        .innerText = String(seconds).padStart(2,"0");
-
+        <div class="countdown">
+            <div class="time-box"><h2>${String(days).padStart(2, "0")}</h2><span>DAYS</span></div>
+            <span class="colon">:</span>
+            <div class="time-box"><h2>${String(hours).padStart(2, "0")}</h2><span>HRS</span></div>
+            <span class="colon">:</span>
+            <div class="time-box"><h2>${String(minutes).padStart(2, "0")}</h2><span>MIN</span></div>
+            <span class="colon">:</span>
+            <div class="time-box"><h2>${String(seconds).padStart(2, "0")}</h2><span>SEC</span></div>
+        </div>
+    `;
 }
-
 
 updateCountdown();
 
 setInterval(updateCountdown, 1000);
+
+
+
+const circuitlayout = document.getElementById("circuitexp");
+const now = new Date();
+
+const upcomingraces = Object.values(trackdata)
+    .filter(race => new Date(race.race) > now)
+    .sort((a, b) =>
+        new Date(a.race) - new Date(b.race)
+    );
+
+if (upcomingraces.length > 0){
+
+    const nextrace = upcomingraces[0];
+
+    circuitlayout.innerHTML = `
+        <div class="track">
+            <img class="circuitimg" id="circuitimg" src="${nextrace.image}" >
+        </div>
+
+        <div class="circuit-info">
+            <h3 id="circuitname">${nextrace.circuit}</h3>
+
+            <p id="circuitdesc">${nextrace.desc}</p>
+
+            <div class="circuit-details">
+                <div class="detail"><span>LENGTH</span><strong id="circuitlength">${nextrace.clength}</strong></div>
+                <div class="detail"><span>CORNERS</span><strong id="circuitcorner">${nextrace.cnr}</strong></div>
+                <div class="detail"><span>LAPS</span><strong id="circuitlaps">${nextrace.laps}</strong></div>
+                <div class="detail"><span>RACE DISTANCE</span><strong id="circuitdist">${nextrace.rdist}</strong></div>
+                <div class="detail"><span>FIRST GRAND PRIX</span><strong id="circuityear">${nextrace.fgp}</strong></div>
+                <div class="detail"><span>FASTEST TIME</span><strong id="circuittime">${nextrace.fltime}</strong></div>
+            </div>
+        </div>
+    `;
+} else {
+    circuitlayout.innerHTML = `
+        <p>No More Upcoming Races</p>
+    `;
+}
 
 </script>
 
